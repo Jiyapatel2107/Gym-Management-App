@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #ffffff;
+      border-right: 1px solid #ddd;
+      padding: 20px 15px;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      color: #007bff;
+      margin-bottom: 30px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 10px;
+    }
+
+    .sidebar ul li a,
+    .sidebar ul li button {
+      display: block;
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 15px;
+      color: #333;
+      text-decoration: none;
+      background-color: #f8f9fa;
+      border: none;
+      border-radius: 6px;
+      transition: all 0.2s;
+      text-align: left;
+    }
+
+    .sidebar ul li a:hover,
+    .sidebar ul li button:hover {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    .sidebar ul li a.active {
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+    }
+
+    /* Main content */
+    .main-content {
+      margin-left: 240px;
+      padding: 30px;
+      flex-grow: 1;
+    }
+
+    .main-content h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    #exportBtn {
+      padding: 10px 16px;
+      margin-bottom: 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    #exportBtn:hover {
+      background-color: #218838;
+    }
+
+    .member-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        border-right: none;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>🏋️ Admin</h2>
+    <ul>
+      <li><a href="dashboard.html" class="active">🏠 Dashboard</a></li>
+      <li><a href="add-member.html">➕ Add Member</a></li>
+      <li><a href="create-bill.html">💵 Create Bills</a></li>
+      <li><a href="assign-package.html">📦 Assign Fee Package</a></li>
+      <li><a href="send-notification.html">🔔 Notifications</a></li>
+      <li><a href="dashboard.html">📤 Export Report</a></li>
+      <li><a href="supplements.html">💊 Supplement Store</a></li>
+      <li><a href="manage-diets.html">🥗 Diet Details</a></li>
+      <li><button onclick="logout()">🚪 Logout</button></li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <h2>All Members</h2>
+    <button id="exportBtn">📤 Export Members</button>
+    <div id="members-container"></div>
+  </div>
+
+  <!-- JavaScript -->
+  <script type="module" src="dashboard.js"></script>
+  <script>
+    function logout() {
+      localStorage.clear();
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .signup-container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 300px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar"></div>
+  <div class="signup-container">
+    <h2>Sign Up</h2>
+    <input type="email" id="signupEmail" placeholder="Email">
+    <input type="password" id="signupPassword" placeholder="Password">
+    <input type="text" id="signupName" placeholder="Name">
+    <input type="text" id="signupPhone" placeholder="Phone">
+
+    <label for="signupRole">Select Role:</label>
+  <select id="signupRole">
+  <option value="user">User</option>
+  <option value="member">Member</option>
+  <option value="admin">Admin</option>
+  </select>
+
+    <button id="signupBtn">Register</button>
+    <p style="text-align: center; margin-top: 10px;">
+      <a href="index.html">Already have an account? Login</a>
+    </p>
+  </div>
+
+  <script type="module" src="signup.js"></script>
+</body>
+</html>

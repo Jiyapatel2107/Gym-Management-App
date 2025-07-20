@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>📦 Assign Fee Package</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 60px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    select, input {
+      width: 100%;
+      max-width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: #28a745;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 30px 15px;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📦 Assign Fee Package</h2>
+    <form id="packageForm">
+      <div class="form-group">
+        <label for="memberId">Select Member</label>
+        <select id="memberId" required>
+          <option value="">-- Select --</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="package">Package</label>
+        <select id="package" required>
+          <option value="">-- Select Package --</option>
+          <option value="Gold">Gold (₹5000/month)</option>
+          <option value="Silver">Silver (₹3000/month)</option>
+          <option value="Bronze">Bronze (₹1500/month)</option>
+        </select>
+      </div>
+
+      <button type="submit">Assign Package</button>
+    </form>
+  </div>
+
+  <script type="module">
+    import { db } from "../src/firebase-config.js";
+    import {
+      collection,
+      getDocs,
+      updateDoc,
+      doc
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    // Load members into dropdown
+    async function loadMembers() {
+      const memberSelect = document.getElementById("memberId");
+      const snap = await getDocs(collection(db, "members"));
+      snap.forEach(docSnap => {
+        const data = docSnap.data();
+        const option = document.createElement("option");
+        option.value = docSnap.id;
+        option.textContent = `${data.name} (${data.email})`;
+        memberSelect.appendChild(option);
+      });
+    }
+
+    loadMembers();
+
+    // Handle form submission
+    document.getElementById("packageForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const memberId = document.getElementById("memberId").value;
+      const selectedPackage = document.getElementById("package").value;
+
+      try {
+        const memberRef = doc(db, "members", memberId);
+        await updateDoc(memberRef, {
+          package: selectedPackage
+        });
+        alert("✅ Fee package assigned successfully!");
+        document.getElementById("packageForm").reset();
+      } catch (error) {
+        alert("❌ Failed to assign package: " + error.message);
+      }
+    });
+  </script>
+</body>
+</html>

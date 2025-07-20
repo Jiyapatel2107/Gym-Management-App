@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>👤 User Profile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #2c3e50;
+    }
+    .info {
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>👤 Your Profile</h2>
+    <div id="user-details">
+      <p>Loading your details...</p>
+    </div>
+    <button id="logoutBtn">🚪 Logout</button>
+  </div>
+
+  <script type="module">
+    import { db } from "../src/firebase-config.js";
+    import {
+      collection,
+      query,
+      where,
+      getDocs,
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    import { formatDate } from "../utils/formatDate.js";
+
+    const role = localStorage.getItem("role");
+    const email = localStorage.getItem("email");
+
+    const detailsDiv = document.getElementById("user-details");
+
+    if (role !== "user") {
+      alert("Access denied. You are not a user.");
+      window.location.href = "mainindex.html";
+    }
+
+    async function loadUserDetails() {
+      if (!email) {
+        detailsDiv.innerHTML = "<p style='color:red;'>Email not found. Please login again.</p>";
+        return;
+      }
+
+      try {
+        // First try to fetch from "members"
+        const membersQuery = query(collection(db, "members"), where("email", "==", email));
+        const memberSnap = await getDocs(membersQuery);
+
+        if (!memberSnap.empty) {
+          const docSnap = memberSnap.docs[0];
+          const data = docSnap.data();
+          detailsDiv.innerHTML = `
+            <div class="info"><strong>Name:</strong> ${data.name}</div>
+            <div class="info"><strong>Email:</strong> ${data.email}</div>
+            <div class="info"><strong>Phone:</strong> ${data.phone}</div>
+            <div class="info"><strong>Joined On:</strong> ${formatDate(data.createdAt)}</div>
+          `;
+          return;
+        }
+
+        // If not found in "members", try "users"
+        const usersDocRef = doc(db, "users", email);
+        const userSnap = await getDoc(usersDocRef);
+
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          detailsDiv.innerHTML = `
+            <div class="info"><strong>Name:</strong> ${userData.name}</div>
+            <div class="info"><strong>Email:</strong> ${userData.email}</div>
+            <div class="info"><strong>Phone:</strong> ${userData.phone}</div>
+            <div class="info"><strong>Joined On:</strong> ${formatDate(userData.createdAt)}</div>
+          `;
+        } else {
+          detailsDiv.innerHTML = "<p style='color:red;'>User details not found in any collection.</p>";
+        }
+      } catch (err) {
+        detailsDiv.innerHTML = `<p style='color:red;'>Error: ${err.message}</p>`;
+      }
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.clear();
+      window.location.href = "index.html";
+    });
+
+    loadUserDetails();
+  </script>
+</body>
+</html>

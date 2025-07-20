@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📢 Member Notifications</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #eef1f5;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    .notification {
+      background-color: #fdfdfd;
+      padding: 16px 20px;
+      margin-bottom: 15px;
+      border-left: 5px solid #007bff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .notification:hover {
+      transform: scale(1.01);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+    }
+
+    .notification p {
+      margin: 0 0 8px;
+      color: #333;
+      font-size: 16px;
+    }
+
+    .notification small {
+      color: #777;
+      font-size: 13px;
+    }
+
+    .no-notification {
+      text-align: center;
+      font-style: italic;
+      color: #666;
+    }
+
+    button {
+      display: block;
+      margin: 30px auto 0;
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 20px;
+        padding: 15px;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔔 Your Notifications</h1>
+    <div id="notifications-container">
+      <p class="no-notification">Loading notifications...</p>
+    </div>
+    <button onclick="logout()">🚪 Logout</button>
+  </div>
+
+  <script type="module">
+    import { db } from "../src/firebase-config.js";
+    import {
+      collection,
+      getDocs,
+      orderBy,
+      query
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    const role = localStorage.getItem("role");
+    if (role !== "member") {
+      alert("Access denied. Members only.");
+      window.location.href = "mainindex.html";
+    }
+
+    async function loadNotifications() {
+      const container = document.getElementById("notifications-container");
+      container.innerHTML = "";
+
+      try {
+        const q = query(collection(db, "notifications"), orderBy("timestamp", "desc"));
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          container.innerHTML = "<p class='no-notification'>No notifications found.</p>";
+          return;
+        }
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const div = document.createElement("div");
+          div.className = "notification";
+          div.innerHTML = `
+            <p>${data.message}</p>
+            <small>📅 ${new Date(data.timestamp).toLocaleString()}</small>
+          `;
+          container.appendChild(div);
+        });
+      } catch (err) {
+        container.innerHTML = `<p class="no-notification" style="color:red;">❌ Error: ${err.message}</p>`;
+      }
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "index.html";
+    }
+
+    loadNotifications();
+  </script>
+</body>
+</html>
